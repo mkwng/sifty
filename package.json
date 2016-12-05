@@ -1,0 +1,13 @@
+{
+  "name": "syft",
+  "version": "1.0.0",
+  "description": "Discover what your teammates are working on",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "mkwng",
+  "devDependencies": {
+    "electron": "^1.4.1"
+  }
+}
