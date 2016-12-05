@@ -5,9 +5,10 @@ const clipboard = require('electron').clipboard
 const ipc = require('electron').ipcRenderer
 
 function pasteFromClipboard() {
+  debugger
   const message = clipboard.readText()
   console.log(message)
-  document.getElementById('paste-from').innerHTML = message
+  document.getElementById('paste').innerHTML = message
 }
 
 ipc.on('pasteDetected', pasteFromClipboard);

@@ -5,6 +5,8 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const globalShortcut = electron.globalShortcut
 const ipc = electron.ipcMain
+const Tray = electron.Tray
+const Menu = electron.Menu
 
 const path = require('path')
 const url = require('url')
@@ -12,6 +14,7 @@ const url = require('url')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let appIcon = null
 
 function createWindow () {
   // Create the browser window.
@@ -36,6 +39,20 @@ function createWindow () {
   })
 }
 
+function putInTray() {
+  const iconName = process.platform === 'win32' ? 'windows-icon.png' : 'iconTemplate.png'
+  const iconPath = path.join('./', iconName)
+  appIcon = new Tray(iconPath)
+  const contextMenu = Menu.buildFromTemplate([{
+    label: 'Test',
+    click: function () {
+      console.log("test");
+    }
+  }])
+  appIcon.setToolTip('Tooltip')
+  appIcon.setContextMenu(contextMenu)
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -44,6 +61,7 @@ app.on('ready', function() {
     mainWindow.webContents.send( 'pasteDetected' );
   })
   createWindow()
+  putInTray()
 })
 
 // Quit when all windows are closed.
@@ -52,6 +70,7 @@ app.on('window-all-closed', function () {
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit()
+    if (appIcon) appIcon.destroy()
   }
 })
 
