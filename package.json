@@ -1,13 +1,20 @@
 {
   "name": "syft",
-  "version": "1.0.0",
-  "description": "Discover what your teammates are working on",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "author": "mkwng",
+  "version": "0.0.1",
+  "private": true,
   "devDependencies": {
-    "electron": "^1.4.1"
-  }
+    "electron": "^1.4.10",
+    "react-scripts": "0.8.1"
+  },
+  "dependencies": {
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1"
+  },
+  "scripts": {
+    "start": "NODE_ENV=development electron .",
+    "build": "react-scripts build",
+    "build:watch": "react-scripts start",
+    "test": "react-scripts test --env=jsdom"
+  },
+  "main": "main.js"
 }
