@@ -11,4 +11,4 @@ var config = {
   storageBucket: "<YOUR-STORAGE-BUCKET>.appspot.com"
 };
 
-firebase.initializeApp(config);
+export default config;
