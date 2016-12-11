@@ -2,7 +2,7 @@
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 var firebase = require('firebase');
-var fireApp = require('electron').remote.getGlobal('fireApp');
+// var fireApp = require('electron').remote.getGlobal('fireApp');
 
 import './style.css';
 
@@ -24,23 +24,23 @@ const Login = React.createClass({
   },
   clickCreate: function(event) {
     event.preventDefault();
-    fireApp.auth().createUserWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
-      // Handle Errors here.
-      debugger;
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // ...
-    });
+    // fireApp.auth().createUserWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
+    //   // Handle Errors here.
+    //   debugger;
+    //   var errorCode = error.code;
+    //   var errorMessage = error.message;
+    //   // ...
+    // });
   },
   clickLogin: function(event) {
     event.preventDefault();
-    fireApp.auth().signInWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
-      // Handle Errors here.
-      debugger;
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // ...
-    });
+    // fireApp.auth().signInWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
+    //   // Handle Errors here.
+    //   debugger;
+    //   var errorCode = error.code;
+    //   var errorMessage = error.message;
+    //   // ...
+    // });
   },
   render: function() {
     const { className, ...props } = this.props;

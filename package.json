@@ -21,7 +21,9 @@
     "package-win": "npm run build && build --win --x64",
     "package-linux": "npm run build && build --linux",
     "package-all": "npm run build && build -mwl",
-    "cleanup": "mop -v"
+    "cleanup": "mop -v",
+    "fix-cache": "rm -rf node_modules && npm cache clean && npm i && npm rb && npm run dev",
+    "fix-cache-package": "rm -rf node_modules && npm cache clean && npm i && npm rb && npm run package"
   },
   "build": {
     "appId": "org.develar.ElectronReact",
@@ -143,8 +145,6 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "electron-debug": "^1.1.0",
-    "electron-google-oauth": "^2.0.0",
-    "electron-oauth2": "^2.4.0",
     "firebase": "^3.6.3",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",

@@ -1,29 +1,16 @@
-// src/components/App/index.js
-import React, { PropTypes, Component } from 'react';
-import classnames from 'classnames';
+// @flow
+import React, { Component, PropTypes } from 'react';
 
-import logo from './logo.svg';
-import './style.css';
-
-class App extends Component {
-  // static propTypes = {}
-  // static defaultProps = {}
-  // state = {}
+export default class App extends Component {
+  static propTypes = {
+    children: PropTypes.element.isRequired
+  };
 
   render() {
-    const { className, ...props } = this.props;
     return (
-      <div className={classnames('App', className)} {...props}>
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div>
+        {this.props.children}
       </div>
     );
   }
 }
-
-export default App;

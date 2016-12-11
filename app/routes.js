@@ -1,18 +1,17 @@
 import React from 'react';
-import { Router, Route } from 'react-router';
+import { Route, IndexRoute } from 'react-router';
 
+import HomePage from './components/HomePage';
 import App from './components/App';
 import About from './components/About';
 import Login from './components/Login';
 import NotFound from './components/NotFound';
 
-const Routes = (props) => (
-  <Router {...props}>
-    <Route path="/" component={App} />
+export default (
+  <Route path="/" component={App}>
+    <IndexRoute component={HomePage} />
     <Route path="/about" component={About} />
     <Route path="/login" component={Login} />
     <Route path="*" component={NotFound} />
-  </Router>
+  </Route>
 );
-
-export default Routes;

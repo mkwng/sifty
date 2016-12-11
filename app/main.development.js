@@ -1,7 +1,6 @@
-import { app, BrowserWindow, Menu, shell } from 'electron';
-const electronOauth2 = require('electron-oauth2');
+import { app, BrowserWindow, Menu, shell, dialog } from 'electron';
+import firebase from 'firebase';
 
-const firebase = require('firebase');
 const config = require('./config');
 const TrayIcon = require('./server-components/TrayIcon');
 
@@ -9,19 +8,19 @@ let menu;
 let template;
 let loginWindow = null;
 let trayIcon = null;
-// let mainWindow = null;
+let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
   sourceMapSupport.install();
 }
 
-if (process.env.NODE_ENV === 'development') {
+// if (process.env.NODE_ENV === 'development') {
   require('electron-debug')(); // eslint-disable-line global-require
   const path = require('path'); // eslint-disable-line
   const p = path.join(__dirname, '..', 'app', 'node_modules'); // eslint-disable-line
   require('module').globalPaths.push(p); // eslint-disable-line
-}
+// }
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
@@ -29,7 +28,7 @@ app.on('window-all-closed', () => {
 
 
 const installExtensions = async () => {
-  if (process.env.NODE_ENV === 'development') {
+  // if (process.env.NODE_ENV === 'development') {
     const installer = require('electron-devtools-installer'); // eslint-disable-line global-require
 
     const extensions = [
@@ -42,45 +41,54 @@ const installExtensions = async () => {
         await installer.default(installer[name], forceDownload);
       } catch (e) {} // eslint-disable-line
     }
-  }
+  // }
 };
 
 app.on('ready', async () => {
+
+  let testDialog = dialog.showMessageBox({message: "Everything is OK so far.", buttons: ["Ok"], title: "A message:"});
+  console.log(testDialog);
+
+  mainWindow = new BrowserWindow();
+  mainWindow.loadURL(`file://${__dirname}/app.html`);
+
   await installExtensions();
+
+  console.log("Showing dialog");
 
   // trayIcon = TrayIcon();
 
-  global.fireApp = firebase.initializeApp(config.firebase)
-  global.fireApp.auth().onAuthStateChanged(function(user) {
+  // global.fireApp = firebase.initializeApp(config.firebase)
+  // global.fireApp.auth().onAuthStateChanged(function(user) {
+  //
+  //   if(user) {
+  //     console.dir(user);
+  //     loginWindow.close();
+  //     loginWindow = null;
+  //
+  //   } else {
+  //     console.log("Not logged in");
+  //     loginWindow = new BrowserWindow({
+  //       show: false,
+  //       width: 800,
+  //       height: 600
+  //     });
+  //
+  //     loginWindow.loadURL(`file://${__dirname}/app.html#/login`);
+  //
+  //     loginWindow.webContents.on('did-finish-load', () => {
+  //       loginWindow.show();
+  //       loginWindow.focus();
+  //     });
+  //
+  //     loginWindow.on('closed', () => {
+  //       loginWindow = null;
+  //     });
+  //   }
+  // });
 
-    if(user) {
-      console.dir(user);
-      loginWindow.close();
-      loginWindow = null;
 
-    } else {
-      console.log("Not logged in");
-      loginWindow = new BrowserWindow({
-        show: false,
-        width: 800,
-        height: 600
-      });
-
-      loginWindow.loadURL(`file://${__dirname}/app.html#/login`);
-
-      loginWindow.webContents.on('did-finish-load', () => {
-        loginWindow.show();
-        loginWindow.focus();
-      });
-
-      loginWindow.on('closed', () => {
-        loginWindow = null;
-      });
-    }
-  });
-
-
-  if (process.env.NODE_ENV === 'development') {
+  // if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools();
     mainWindow.webContents.on('context-menu', (e, props) => {
       const { x, y } = props;
@@ -92,7 +100,7 @@ app.on('ready', async () => {
         }
       }]).popup(mainWindow);
     });
-  }
+  // }
 
   if (process.platform === 'darwin') {
     template = [{
@@ -158,7 +166,7 @@ app.on('ready', async () => {
       }]
     }, {
       label: 'View',
-      submenu: (process.env.NODE_ENV === 'development') ? [{
+      submenu: (true) ? [{
         label: 'Reload',
         accelerator: 'Command+R',
         click() {
@@ -241,7 +249,7 @@ app.on('ready', async () => {
       }]
     }, {
       label: '&View',
-      submenu: (process.env.NODE_ENV === 'development') ? [{
+      submenu: (true) ? [{
         label: '&Reload',
         accelerator: 'Ctrl+R',
         click() {
