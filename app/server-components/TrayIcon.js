@@ -1,9 +1,12 @@
-import { Menu, Tray, app } from 'electron';
+import { Menu, Tray, app, dialog } from 'electron';
 
 function TrayIcon(options) {
   options = options || {}
   const iconName = process.platform === 'win32' ? 'windows-icon.png' : 'iconTemplate.png'
   const iconPath = `${__dirname}/../public/${iconName}`
+
+
+      dialog.showMessageBox({message: "Trying to make appIcon!", buttons: ["Ok"], title: "Auth state"})
 
   var appIcon = new Tray(iconPath)
   const contextMenu = Menu.buildFromTemplate([

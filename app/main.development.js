@@ -1,5 +1,4 @@
 import { app, BrowserWindow, Menu, shell, dialog, ipcMain } from 'electron';
-var XMLHttpRequest = require('xhr2');
 
 // var firebase = require('firebase/app');
 // require('firebase/auth');
@@ -29,11 +28,15 @@ var logout = function() {
   });
 
   logoutWindow.loadURL(`file://${__dirname}/app.html#/logout`);
-  logoutWindow.openDevTools();
-  logoutWindow.show();
-  logoutWindow.focus();
+  if(process.env.NODE_ENV === 'development') {
+    logoutWindow.openDevTools();
+    logoutWindow.show();
+    logoutWindow.focus();
+  }
 
   ipcMain.once('logout-event', (event) => {
+
+    dialog.showMessageBox({message: "You're logged out!", buttons: ["Ok"], title: "Auth state"})
     logoutWindow.close();
     login();
   });
@@ -49,9 +52,12 @@ var login = function() {
   });
 
   loginWindow.loadURL(`file://${__dirname}/app.html#/login`);
-  loginWindow.openDevTools();
-  loginWindow.show();
-  loginWindow.focus();
+
+  if(process.env.NODE_ENV === 'development') {
+    loginWindow.openDevTools();
+    loginWindow.show();
+    loginWindow.focus();
+  }
 
   // loginWindow.on('did-finish-load', () => {
   //   loginWindow.show();
@@ -64,8 +70,8 @@ var login = function() {
 
   ipcMain.on('login-event', (event, arg) => {
     if(arg) {
-      dialog.showMessageBox(loginWindow, {message: "You're already logged in!", buttons: ["Ok"], title: "Auth state"})
-      // loginWindow.close();
+      dialog.showMessageBox({message: "You're logged in!", buttons: ["Ok"], title: "Auth state"})
+      loginWindow.close();
     } else {
       loginWindow.show();
       loginWindow.focus();
@@ -80,6 +86,7 @@ app.on('window-all-closed', () => {
 
 app.on('ready', async () => {
 
+  dialog.showMessageBox({message: "App is ready", buttons: ["Ok"], title: "Auth state"})
   // mainWindow = new BrowserWindow();
   // mainWindow.loadURL(`file://${__dirname}/app.html`);
 
