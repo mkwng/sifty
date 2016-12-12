@@ -1,10 +1,9 @@
 // src/components/Login/index.js
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
-var firebase = require('firebase');
-// var fireApp = require('electron').remote.getGlobal('fireApp');
-
+import { ipcRenderer } from 'electron';
 import './style.css';
+import fireApp from '../fireApp';
 
 const Login = React.createClass({
   // static propTypes = {}
@@ -12,9 +11,23 @@ const Login = React.createClass({
   // state = {}
   getInitialState() {
     return {
+      hasResponse: false,
       emailValue: "",
       passwordValue: ""
     }
+  },
+  componentDidMount: function() {
+    fireApp.auth().onAuthStateChanged(function(user) {
+      if(user) {
+        console.dir(user);
+        ipcRenderer.send("login-event", user);
+        ipcRenderer.on("login-reply", (event, arg) => {
+          console.log(arg) // prints "pong"
+        });
+      } else {
+        this.setState({hasResponse: true});
+      }
+    }.bind(this) );
   },
   handleEmailChange: function(event) {
     this.setState({emailValue: event.target.value});
@@ -24,28 +37,35 @@ const Login = React.createClass({
   },
   clickCreate: function(event) {
     event.preventDefault();
-    // fireApp.auth().createUserWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
-    //   // Handle Errors here.
-    //   debugger;
-    //   var errorCode = error.code;
-    //   var errorMessage = error.message;
-    //   // ...
-    // });
+    fireApp.auth().createUserWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
+      // Handle Errors here.
+      debugger;
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    });
   },
   clickLogin: function(event) {
     event.preventDefault();
-    // fireApp.auth().signInWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
-    //   // Handle Errors here.
-    //   debugger;
-    //   var errorCode = error.code;
-    //   var errorMessage = error.message;
-    //   // ...
-    // });
+    fireApp.auth().signInWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
+      // Handle Errors here.
+      debugger;
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    });
   },
   render: function() {
     const { className, ...props } = this.props;
+    if(!this.state.hasResponse) {
+      return (
+        <div>
+          Loading...
+        </div>
+      );
+    }
     return (
-      <div className={classnames('Login', className)} {...props}>
+      <div className={classnames('Login', className)}>
         <h1>
           Login
         </h1>

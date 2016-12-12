@@ -1,5 +1,10 @@
-import { app, BrowserWindow, Menu, shell, dialog } from 'electron';
-import firebase from 'firebase';
+import { app, BrowserWindow, Menu, shell, dialog, ipcMain } from 'electron';
+var XMLHttpRequest = require('xhr2');
+
+// var firebase = require('firebase/app');
+// require('firebase/auth');
+// require('firebase/database');
+// require('firebase/storage');
 
 const config = require('./config');
 const TrayIcon = require('./server-components/TrayIcon');
@@ -15,92 +20,77 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-// if (process.env.NODE_ENV === 'development') {
-  require('electron-debug')(); // eslint-disable-line global-require
-  const path = require('path'); // eslint-disable-line
-  const p = path.join(__dirname, '..', 'app', 'node_modules'); // eslint-disable-line
-  require('module').globalPaths.push(p); // eslint-disable-line
-// }
+var logout = function() {
+  console.log("logging out...");
+  let logoutWindow = new BrowserWindow({
+    show: false,
+    width: 800,
+    height: 600
+  });
+
+  logoutWindow.loadURL(`file://${__dirname}/app.html#/logout`);
+  logoutWindow.openDevTools();
+  logoutWindow.show();
+  logoutWindow.focus();
+
+  ipcMain.once('logout-event', (event) => {
+    logoutWindow.close();
+    login();
+  });
+
+}
+
+var login = function() {
+  console.log("logging in...");
+  loginWindow = new BrowserWindow({
+    show: false,
+    width: 800,
+    height: 600
+  });
+
+  loginWindow.loadURL(`file://${__dirname}/app.html#/login`);
+  loginWindow.openDevTools();
+  loginWindow.show();
+  loginWindow.focus();
+
+  // loginWindow.on('did-finish-load', () => {
+  //   loginWindow.show();
+  //   loginWindow.focus();
+  // });
+
+  loginWindow.on('closed', () => {
+    loginWindow = null;
+  });
+
+  ipcMain.on('login-event', (event, arg) => {
+    if(arg) {
+      dialog.showMessageBox(loginWindow, {message: "You're already logged in!", buttons: ["Ok"], title: "Auth state"})
+      // loginWindow.close();
+    } else {
+      loginWindow.show();
+      loginWindow.focus();
+    }
+    // event.sender.send('login-reply', 'pong')
+  })
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-
-const installExtensions = async () => {
-  // if (process.env.NODE_ENV === 'development') {
-    const installer = require('electron-devtools-installer'); // eslint-disable-line global-require
-
-    const extensions = [
-      'REACT_DEVELOPER_TOOLS',
-      'REDUX_DEVTOOLS'
-    ];
-    const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-    for (const name of extensions) { // eslint-disable-line
-      try {
-        await installer.default(installer[name], forceDownload);
-      } catch (e) {} // eslint-disable-line
-    }
-  // }
-};
-
 app.on('ready', async () => {
 
-  let testDialog = dialog.showMessageBox({message: "Everything is OK so far.", buttons: ["Ok"], title: "A message:"});
-  console.log(testDialog);
+  // mainWindow = new BrowserWindow();
+  // mainWindow.loadURL(`file://${__dirname}/app.html`);
 
-  mainWindow = new BrowserWindow();
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  trayIcon = TrayIcon({
+    onLogout: logout,
+    onQuit: function() {
+      app.quit();
+    }
+  });
 
-  await installExtensions();
-
-  console.log("Showing dialog");
-
-  // trayIcon = TrayIcon();
-
-  // global.fireApp = firebase.initializeApp(config.firebase)
-  // global.fireApp.auth().onAuthStateChanged(function(user) {
-  //
-  //   if(user) {
-  //     console.dir(user);
-  //     loginWindow.close();
-  //     loginWindow = null;
-  //
-  //   } else {
-  //     console.log("Not logged in");
-  //     loginWindow = new BrowserWindow({
-  //       show: false,
-  //       width: 800,
-  //       height: 600
-  //     });
-  //
-  //     loginWindow.loadURL(`file://${__dirname}/app.html#/login`);
-  //
-  //     loginWindow.webContents.on('did-finish-load', () => {
-  //       loginWindow.show();
-  //       loginWindow.focus();
-  //     });
-  //
-  //     loginWindow.on('closed', () => {
-  //       loginWindow = null;
-  //     });
-  //   }
-  // });
-
-
-  // if (process.env.NODE_ENV === 'development') {
-    mainWindow.openDevTools();
-    mainWindow.webContents.on('context-menu', (e, props) => {
-      const { x, y } = props;
-
-      Menu.buildFromTemplate([{
-        label: 'Inspect element',
-        click() {
-          mainWindow.inspectElement(x, y);
-        }
-      }]).popup(mainWindow);
-    });
-  // }
+  login();
 
   if (process.platform === 'darwin') {
     template = [{
@@ -166,29 +156,17 @@ app.on('ready', async () => {
       }]
     }, {
       label: 'View',
-      submenu: (true) ? [{
+      submenu: [{
         label: 'Reload',
         accelerator: 'Command+R',
         click() {
           mainWindow.webContents.reload();
         }
       }, {
-        label: 'Toggle Full Screen',
-        accelerator: 'Ctrl+Command+F',
-        click() {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        }
-      }, {
         label: 'Toggle Developer Tools',
         accelerator: 'Alt+Command+I',
         click() {
           mainWindow.toggleDevTools();
-        }
-      }] : [{
-        label: 'Toggle Full Screen',
-        accelerator: 'Ctrl+Command+F',
-        click() {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
       }]
     }, {
@@ -249,29 +227,17 @@ app.on('ready', async () => {
       }]
     }, {
       label: '&View',
-      submenu: (true) ? [{
+      submenu: [{
         label: '&Reload',
         accelerator: 'Ctrl+R',
         click() {
           mainWindow.webContents.reload();
         }
       }, {
-        label: 'Toggle &Full Screen',
-        accelerator: 'F11',
-        click() {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
-        }
-      }, {
         label: 'Toggle &Developer Tools',
         accelerator: 'Alt+Ctrl+I',
         click() {
           mainWindow.toggleDevTools();
-        }
-      }] : [{
-        label: 'Toggle &Full Screen',
-        accelerator: 'F11',
-        click() {
-          mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
       }]
     }, {

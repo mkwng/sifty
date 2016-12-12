@@ -19,6 +19,12 @@ function TrayIcon(options) {
       type: 'separator'
     },
     {
+      label: 'Log out',
+      click: function () {
+        if(typeof options.onLogout === 'function') options.onLogout();
+      }
+    },
+    {
       label: 'Exit',
       click: function () {
         if(typeof options.onQuit === 'function') options.onQuit();
