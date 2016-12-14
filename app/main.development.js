@@ -4,7 +4,10 @@ const config = require('./config');
 const TrayIcon = require('./server-components/TrayIcon');
 const MenuItems = require('./server-components/MenuItems');
 
-let Syft = {};
+var Syft = {
+  tray: null
+};
+
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
@@ -72,50 +75,62 @@ var login = function(options) {
   return loginWindow;
 }
 
-var createFromClipboard = function() {
+var createFromClipboard = function(options) {
   options = options || {};
 
-  console.log("logging in...");
-  loginWindow = new BrowserWindow({
+  app.dock.show();
+
+  var createWindow = new BrowserWindow({
     show: false,
     width: 800,
     height: 600
   });
 
-  loginWindow.loadURL(`file://${__dirname}/app.html#/create`);
+  createWindow.loadURL(`file://${__dirname}/app.html#/create`);
 
   // if(process.env.NODE_ENV === 'development') {
-    loginWindow.openDevTools();
-    loginWindow.show();
-    loginWindow.focus();
+    createWindow.openDevTools();
+    createWindow.show();
+    createWindow.focus();
   // }
+
+  ipcMain.once('upload-event', (event, arg) => {
+    if(typeof options.success === 'function') options.success();
+    console.log(arg)
+    createWindow.close();
+    createWindow = null;
+  });
 }
 
+app.dock.hide();
+
 app.on('window-all-closed', () => {
+  app.dock.hide();
+
   if (process.platform !== 'darwin') app.quit();
 });
 
 app.on('ready', async () => {
 
-  console.log("MKWNG: Test test test test: Login");
+
+  console.log("1: login");
   Syft.login = login({
     success: function() {
-      // dialog.showMessageBox({message: "You're logged in!", buttons: ["Ok"], title: "Auth state"})
       Syft.login = null;
     },
     fail: function() {}
   });
 
-  console.log("MKWNG: Test test test test: Menu");
+  console.log("2: menu");
   Syft.login.setMenu( MenuItems() )
 
-  console.log("MKWNG: Test test test test: Shortcut");
+  console.log("3: shortcut");
   Syft.shortcut = globalShortcut.register('CmdOrCtrl+Shift+P', () => {
-    console.log('CmdOrCtrl+Shift+P is pressed')
+    createFromClipboard();
   })
 
-  console.log("MKWNG: Test test test test: Icon");
-  Syft.icon = trayIcon = TrayIcon({
+  console.log("4: tray");
+  Syft.tray = trayIcon = TrayIcon({
     onLogout: function() {
       logout({
         success: function() {
@@ -128,5 +143,6 @@ app.on('ready', async () => {
       app.quit();
     }
   });
+  Syft.tray.setToolTip("Syft");
 
 });

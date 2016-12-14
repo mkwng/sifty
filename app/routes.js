@@ -6,6 +6,7 @@ import App from './components/App';
 import About from './components/About';
 import Login from './components/Login';
 import Logout from './components/Logout';
+import Create from './components/Create';
 import NotFound from './components/NotFound';
 
 export default (
@@ -14,6 +15,7 @@ export default (
     <Route path="/about" component={About} />
     <Route path="/login" component={Login} />
     <Route path="/logout" component={Logout} />
+    <Route path="/create" component={Create} />
     <Route path="*" component={NotFound} />
   </Route>
 );
