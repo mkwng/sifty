@@ -13,7 +13,7 @@ function TrayIcon(options) {
     ? path.join(__dirname, '/../public/', iconName)
     : path.join(__dirname, '/public/', iconName)
 
-  dialog.showMessageBox({message: "Trying to make appIcon @ " + iconPath, buttons: ["Ok"], title: "Auth state"})
+  // dialog.showMessageBox({message: "Trying to make appIcon @ " + iconPath, buttons: ["Ok"], title: "Auth state"})
 
   var appIcon = new Tray(iconPath)
   const contextMenu = Menu.buildFromTemplate([
@@ -49,7 +49,6 @@ function TrayIcon(options) {
     if(typeof options.onDrop === 'function') options.onDrop(e,f);
     // mainWindow.webContents.send( 'dropDetected', {"e":e, "f":f} );
   })
-
   return appIcon;
 }
 
