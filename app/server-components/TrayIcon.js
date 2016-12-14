@@ -11,7 +11,7 @@ function TrayIcon(options) {
   const iconName = process.platform === 'win32' ? 'windows-icon.png' : 'iconTemplate.png'
   const iconPath = process.env.NODE_ENV === 'development'
     ? path.join(__dirname, '/../public/', iconName)
-    : path.join('/public/', iconName)
+    : path.join(__dirname, '/public/', iconName)
 
   dialog.showMessageBox({message: "Trying to make appIcon @ " + iconPath, buttons: ["Ok"], title: "Auth state"})
 
