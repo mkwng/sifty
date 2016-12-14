@@ -1,10 +1,5 @@
 import { app, BrowserWindow, Menu, shell, dialog, ipcMain } from 'electron';
 
-// var firebase = require('firebase/app');
-// require('firebase/auth');
-// require('firebase/database');
-// require('firebase/storage');
-
 const config = require('./config');
 const TrayIcon = require('./server-components/TrayIcon');
 
@@ -19,7 +14,9 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-var logout = function() {
+var logout = function(options) {
+  options = options || {};
+
   console.log("logging out...");
   let logoutWindow = new BrowserWindow({
     show: false,
@@ -35,15 +32,15 @@ var logout = function() {
   }
 
   ipcMain.once('logout-event', (event) => {
-
-    dialog.showMessageBox({message: "You're logged out!", buttons: ["Ok"], title: "Auth state"})
+    if(typeof options.success === 'function') options.success();
     logoutWindow.close();
-    login();
   });
 
 }
 
-var login = function() {
+var login = function(options) {
+  options = options || {};
+
   console.log("logging in...");
   loginWindow = new BrowserWindow({
     show: false,
@@ -53,16 +50,11 @@ var login = function() {
 
   loginWindow.loadURL(`file://${__dirname}/app.html#/login`);
 
-  if(process.env.NODE_ENV === 'development') {
+  // if(process.env.NODE_ENV === 'development') {
     loginWindow.openDevTools();
     loginWindow.show();
     loginWindow.focus();
-  }
-
-  // loginWindow.on('did-finish-load', () => {
-  //   loginWindow.show();
-  //   loginWindow.focus();
-  // });
+  // }
 
   loginWindow.on('closed', () => {
     loginWindow = null;
@@ -70,7 +62,7 @@ var login = function() {
 
   ipcMain.on('login-event', (event, arg) => {
     if(arg) {
-      dialog.showMessageBox({message: "You're logged in!", buttons: ["Ok"], title: "Auth state"})
+      if(typeof options.success === 'function') options.success();
       loginWindow.close();
     } else {
       loginWindow.show();
@@ -91,13 +83,25 @@ app.on('ready', async () => {
   // mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   trayIcon = TrayIcon({
-    onLogout: logout,
+    onLogout: function() {
+      logout({
+        success: function() {
+          dialog.showMessageBox({message: "You're logged out!", buttons: ["Ok"], title: "Auth state"});
+          login();
+        }
+      });
+    },
     onQuit: function() {
       app.quit();
     }
   });
 
-  login();
+  login({
+    success: function() {
+      dialog.showMessageBox({message: "You're logged in!", buttons: ["Ok"], title: "Auth state"})
+    },
+    fail: function() {}
+  });
 
   if (process.platform === 'darwin') {
     template = [{

@@ -1,12 +1,19 @@
-import { Menu, Tray, app, dialog } from 'electron';
+import { Menu, Tray, app, dialog, nativeImage } from 'electron';
+import path from 'path';
+// var iconMac = require('./iconTemplate.png');
+// require('./iconTemplate@2x.png');
+// var iconWin = require('./windows-icon.png');
+//
+// console.log(iconMac);
 
 function TrayIcon(options) {
   options = options || {}
   const iconName = process.platform === 'win32' ? 'windows-icon.png' : 'iconTemplate.png'
-  const iconPath = `${__dirname}/../public/${iconName}`
+  const iconPath = process.env.NODE_ENV === 'development'
+    ? path.join(__dirname, '/../public/', iconName)
+    : path.join('/public/', iconName)
 
-
-      dialog.showMessageBox({message: "Trying to make appIcon!", buttons: ["Ok"], title: "Auth state"})
+  dialog.showMessageBox({message: "Trying to make appIcon @ " + iconPath, buttons: ["Ok"], title: "Auth state"})
 
   var appIcon = new Tray(iconPath)
   const contextMenu = Menu.buildFromTemplate([

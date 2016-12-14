@@ -45,6 +45,7 @@
     },
     "files": [
       "dist/",
+      "public/",
       "node_modules/",
       "app.html",
       "main.js",
@@ -154,7 +155,8 @@
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
     "source-map-support": "^0.4.6",
-    "tachyons": "^4.5.6"
+    "tachyons": "^4.5.6",
+    "webpack-isomorphic-tools": "^2.6.4"
   },
   "devEngines": {
     "node": ">=6.x",

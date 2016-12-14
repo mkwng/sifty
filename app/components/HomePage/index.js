@@ -1,6 +1,9 @@
 // src/components/HomePage/index.js
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
+import macIcon from '../../public/iconTemplate.png';
+import macIcon2 from '../../public/iconTemplate@2x.png';
+import winIcon from '../../public/windows-icon@2x.png';
 
 import logo from './logo.svg';
 import './style.css';
