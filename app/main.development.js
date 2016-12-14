@@ -7,6 +7,7 @@ const MenuItems = require('./server-components/MenuItems');
 var Syft = {
   tray: null
 };
+var SyftTray = null;
 
 
 if (process.env.NODE_ENV === 'production') {
@@ -80,7 +81,7 @@ var createFromClipboard = function(options) {
 
   app.dock.show();
 
-  var createWindow = new BrowserWindow({
+  let createWindow = new BrowserWindow({
     show: false,
     width: 800,
     height: 600
@@ -97,9 +98,8 @@ var createFromClipboard = function(options) {
   ipcMain.once('upload-event', (event, arg) => {
     if(typeof options.success === 'function') options.success();
     console.log(arg)
-    createWindow.close();
-    createWindow = null;
-  });
+    if(createWindow) createWindow.close();
+  } );
 }
 
 app.dock.hide();
@@ -130,7 +130,7 @@ app.on('ready', async () => {
   })
 
   console.log("4: tray");
-  Syft.tray = trayIcon = TrayIcon({
+  SyftTray = trayIcon = TrayIcon({
     onLogout: function() {
       logout({
         success: function() {
@@ -141,8 +141,11 @@ app.on('ready', async () => {
     },
     onQuit: function() {
       app.quit();
+    },
+    onCapture: function() {
+      createFromClipboard();
     }
   });
-  Syft.tray.setToolTip("Syft");
+  SyftTray.setToolTip("Syft");
 
 });

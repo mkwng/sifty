@@ -81,6 +81,7 @@ const Create = React.createClass({
         }, function() {
           // Upload completed successfully, now we can get the download URL
           var downloadURL = uploadTask.snapshot.downloadURL;
+          clipboard.writeText(downloadURL);
           ipcRenderer.send("upload-event", downloadURL);
         }.bind(this) );
         break;

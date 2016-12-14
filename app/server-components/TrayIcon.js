@@ -20,9 +20,7 @@ function TrayIcon(options) {
     {
       label: 'Capture from clipboard',
       click: function () {
-        var newFileWindow = newFileUpload();
-        debugger;
-        newFileWindow.webContents.send( 'shortcutDetected' );
+        if(typeof options.onCapture === 'function') options.onCapture();
       }
     },
     {
