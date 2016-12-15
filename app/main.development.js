@@ -1,14 +1,10 @@
 import { app, BrowserWindow, dialog, ipcMain, globalShortcut } from 'electron';
-
+import fs from 'fs';
 const config = require('./config');
 const TrayIcon = require('./server-components/TrayIcon');
 const MenuItems = require('./server-components/MenuItems');
 
-var Syft = {
-  tray: null
-};
-var SyftTray = null;
-
+let Syft = {};
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
@@ -66,6 +62,7 @@ var login = function(options) {
     if(arg) {
       if(typeof options.success === 'function') options.success();
       loginWindow.close();
+      global.user = arg
     } else {
       console.dir(loginWindow)
       loginWindow.show();
@@ -95,10 +92,20 @@ var createFromClipboard = function(options) {
     createWindow.focus();
   // }
 
+  // ipcMain.once('image-buffer', function writeImage(event, arg) {
+  //   let imagePath = `${__dirname}/public/uploads/` + arg.title + ".png"
+  //   console.log(imagePath);
+  //   fs.writeFile(imagePath, arg.image ,"base64", function(err) {
+  //     if (err) throw err;
+  //     if(createWindow) createWindow.webContents.send('write-complete', `file://` + imagePath);
+  //   })
+  // } );
+
   ipcMain.once('upload-event', (event, arg) => {
+    // ipcMain.removeListener('image-buffer', writeImage);
     if(typeof options.success === 'function') options.success();
     console.log(arg)
-    if(createWindow) createWindow.close();
+    if(createWindow !== null) createWindow.close();
   } );
 }
 
@@ -110,8 +117,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-app.on('ready', async () => {
-
+app.on('ready', () => {
 
   console.log("1: login");
   Syft.login = login({
@@ -130,7 +136,7 @@ app.on('ready', async () => {
   })
 
   console.log("4: tray");
-  SyftTray = trayIcon = TrayIcon({
+  Syft.tray = TrayIcon({
     onLogout: function() {
       logout({
         success: function() {
@@ -146,6 +152,6 @@ app.on('ready', async () => {
       createFromClipboard();
     }
   });
-  SyftTray.setToolTip("Syft");
+  Syft.tray.setToolTip("Syft");
 
 });

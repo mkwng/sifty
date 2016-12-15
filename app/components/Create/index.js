@@ -1,13 +1,15 @@
 // src/components/Create/index.js
 import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
-import { ipcRenderer, clipboard } from 'electron';
+import { ipcRenderer, clipboard, remote } from 'electron';
+import fireApp from '../fireApp';
+var _ = require('lodash');
 
 const Create = React.createClass({
   getInitialState: function() {
     return {
       type: null,
-      imageString: null,
+      image: null,
       desc: null,
       title: "New pasted content",
       contentType: null,
@@ -16,21 +18,40 @@ const Create = React.createClass({
     };
   },
   componentDidMount: function() {
-    console.log(clipboard.availableFormats())
+    let formats = clipboard.availableFormats();
+    console.log(formats)
+    if(_.includes(formats, "image/png")) {
+      this.setState({
+        contentType: "image/png",
+        image: clipboard.readImage()
+      });
+    } else {
+      // this is not a png
+    }
+    if(_.includes(formats, "text/plain")) {
+      this.setState({
+        title: clipboard.readText()
+      });
+    }
 
-    switch(clipboard.availableFormats()[0]) {
-      case "text/plain":
-        this.setState({contentType: "text/plain", desc: clipboard.readText()});
-        break;
-      case "image/png":
-        var image = clipboard.readImage();
-        this.setState({contentType: "image/png", imageString: btoa(String.fromCharCode.apply( null, image.toPNG() )) });
-        break;
-      case "image/jpeg":
-        break;
-      default:
-        break;
-    };
+    // switch(clipboard.availableFormats()[0]) {
+    //   case "text/plain":
+    //     this.setState({contentType: "text/plain", desc: clipboard.readText()});
+    //     break;
+    //   case "image/png":
+    //     var image = clipboard.readImage();
+    //     this.setState({
+    //       contentType: "image/png",
+    //       // imageURL: image.toDataURL(),
+    //       // imageString: btoa(String.fromCharCode.apply( null, image.toPNG() )),
+    //       image: image
+    //     });
+    //     break;
+    //   case "image/jpeg":
+    //     break;
+    //   default:
+    //     break;
+    // };
 
   },
   handleTitleChange: function() {
@@ -49,7 +70,12 @@ const Create = React.createClass({
         break;
       case "image/png":
         let storageRef = firebase.storage().ref();
-        let uploadTask = storageRef.child('images/' + encodeURI(this.state.title) + '.png').putString(this.state.imageString, 'base64', {contentType: this.state.contentType});
+        // ipcRenderer.send("image-buffer", {
+        //   title:encodeURI(this.state.title.replace(/ /g,"_")),
+        //   image:this.state.image.toPNG()
+        // });
+
+        let uploadTask = storageRef.child('/user/' + remote.getGlobal('user').uid + '/uploads/' + encodeURI(this.state.title.replace(/ /g,"_")) + '.png').put(this.state.image.toPNG(), {contentType: 'image/png'});
         uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
           function(snapshot) {
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -84,6 +110,14 @@ const Create = React.createClass({
           clipboard.writeText(downloadURL);
           ipcRenderer.send("upload-event", downloadURL);
         }.bind(this) );
+
+        // ipcRenderer.on('write-complete', (e, url) => {
+        // })
+
+        // let uploadTask = storageRef.child('images/' + encodeURI(this.state.title) + '.png').putString(this.state.imageString.substring(this.state.imageString.indexOf(",") + 1), 'base64', {contentType: this.state.contentType});
+        // console.log(this.state.image.toPNG())
+        // debugger;
+        // let uploadTask = storageRef.put(this.state.image.toPNG())
         break;
       default:
         break;
@@ -100,7 +134,7 @@ const Create = React.createClass({
         break;
       case "image/png":
         content = (
-          <img src={ 'data:image/png;base64,' + this.state.imageString } />
+          <img src={ this.state.image.toDataURL() } />
         )
         break;
       default:
