@@ -70,11 +70,12 @@ const Create = React.createClass({
         break;
       case "image/png":
         let storageRef = firebase.storage().ref();
+        let databaseRef = firebase.database().ref();
         // ipcRenderer.send("image-buffer", {
         //   title:encodeURI(this.state.title.replace(/ /g,"_")),
         //   image:this.state.image.toPNG()
         // });
-
+        console.dir(remote.getGlobal('user'));
         let uploadTask = storageRef.child('/user/' + remote.getGlobal('user').uid + '/uploads/' + encodeURI(this.state.title.replace(/ /g,"_")) + '.png').put(this.state.image.toPNG(), {contentType: 'image/png'});
         uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
           function(snapshot) {
@@ -106,9 +107,20 @@ const Create = React.createClass({
           }
         }, function() {
           // Upload completed successfully, now we can get the download URL
-          var downloadURL = uploadTask.snapshot.downloadURL;
-          clipboard.writeText(downloadURL);
-          ipcRenderer.send("upload-event", downloadURL);
+          let downloadURL = uploadTask.snapshot.downloadURL;
+
+          let postKey = databaseRef.child('posts').push().key;
+          let updates = {};
+          updates['/posts/' + postKey] = {
+            uid: remote.getGlobal('user').uid,
+            url: downloadURL,
+            title: this.state.title
+          };
+          databaseRef.update(updates, function() {
+            clipboard.writeText(downloadURL);
+            ipcRenderer.send("upload-event", downloadURL);
+          });
+
         }.bind(this) );
 
         // ipcRenderer.on('write-complete', (e, url) => {

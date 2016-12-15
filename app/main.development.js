@@ -64,7 +64,7 @@ var login = function(options) {
       loginWindow.close();
       global.user = arg
     } else {
-      console.dir(loginWindow)
+      app.dock.show();
       loginWindow.show();
       loginWindow.focus();
     }
@@ -79,18 +79,17 @@ var createFromClipboard = function(options) {
   app.dock.show();
 
   let createWindow = new BrowserWindow({
-    show: false,
+    show: true,
     width: 800,
     height: 600
   });
 
   createWindow.loadURL(`file://${__dirname}/app.html#/create`);
+  createWindow.focus();
 
-  // if(process.env.NODE_ENV === 'development') {
+  if(process.env.NODE_ENV === 'development') {
     createWindow.openDevTools();
-    createWindow.show();
-    createWindow.focus();
-  // }
+  }
 
   // ipcMain.once('image-buffer', function writeImage(event, arg) {
   //   let imagePath = `${__dirname}/public/uploads/` + arg.title + ".png"
@@ -107,6 +106,24 @@ var createFromClipboard = function(options) {
     console.log(arg)
     if(createWindow !== null) createWindow.close();
   } );
+}
+
+var openProfile = function() {
+  app.dock.show();
+
+  let profileWindow = new BrowserWindow({
+    show: true,
+    width: 800,
+    height: 600
+  });
+  profileWindow.loadURL(`file://${__dirname}/app.html#/profile/mkwng`);
+  profileWindow.focus();
+
+  if(process.env.NODE_ENV === 'development') {
+    profileWindow.openDevTools();
+  }
+
+  return profileWindow;
 }
 
 app.dock.hide();
@@ -150,6 +167,9 @@ app.on('ready', () => {
     },
     onCapture: function() {
       createFromClipboard();
+    },
+    onProfile: function() {
+      Syft.mainWindow = openProfile();
     }
   });
   Syft.tray.setToolTip("Syft");

@@ -27,6 +27,15 @@ function TrayIcon(options) {
       type: 'separator'
     },
     {
+      label: 'View my profile',
+      click: function () {
+        if(typeof options.onProfile === 'function') options.onProfile();
+      }
+    },
+    {
+      type: 'separator'
+    },
+    {
       label: 'Log out',
       click: function () {
         if(typeof options.onLogout === 'function') options.onLogout();
