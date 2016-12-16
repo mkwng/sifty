@@ -7,16 +7,16 @@ Discover what your teammates are working on
 * Join a team and see a stream of posts from your teammates
 
 ### Todo
-[] Require username on account creation
-[] Profile to view all your own posts
-[] Post detail page, publically visible
-[] Upload by dragging file onto icon
-[] Upload by copying file
-[] Handle multiple files
-[] Upload type: Text only posts
-[] Upload type: Audio
-[] Upload type: Video
-[] Upload type: Zip files and others
-[] Feed of all public posts
-[] Commenting on posts
-[] Concept of a team, joining, creating, managing
+- [ ] Require username on account creation
+- [ ] Profile to view all your own posts
+- [ ] Post detail page, publically visible
+- [ ] Upload by dragging file onto icon
+- [ ] Upload by copying file
+- [ ] Handle multiple files
+- [ ] Upload type: Text only posts
+- [ ] Upload type: Audio
+- [ ] Upload type: Video
+- [ ] Upload type: Zip files and others
+- [ ] Feed of all public posts
+- [ ] Commenting on posts
+- [ ] Concept of a team, joining, creating, managing
