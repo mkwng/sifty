@@ -146,7 +146,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "electron-debug": "^1.1.0",
-    "firebase": "^3.6.3",
+    "firebase": "^3.6.4",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-redux": "^4.4.6",
