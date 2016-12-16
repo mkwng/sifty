@@ -6,14 +6,12 @@ import './style.css';
 import fireApp from '../fireApp';
 
 const Login = React.createClass({
-  // static propTypes = {}
-  // static defaultProps = {}
-  // state = {}
   getInitialState() {
     return {
       hasResponse: false,
       emailValue: "",
-      passwordValue: ""
+      passwordValue: "",
+      usernameValue: ""
     }
   },
   componentDidMount: function() {
@@ -35,25 +33,35 @@ const Login = React.createClass({
   handlePasswordChange: function(event) {
     this.setState({passwordValue: event.target.value});
   },
+  handleUsernameChange: function(event) {
+    this.setState({usernameValue: event.target.value});
+  },
   clickCreate: function(event) {
     event.preventDefault();
-    fireApp.auth().createUserWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
-      // Handle Errors here.
-      debugger;
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // ...
-    });
+    // Create a user object
+    fireApp.auth().createUserWithEmailAndPassword(this.state.emailValue, this.state.passwordValue)
+      .then(function(user) {
+        // Associate them with a username
+        let databaseRef = firebase.database().ref();
+        let userKey = databaseRef.child('users').push().key;
+        let updates = {};
+        updates['/users/' + userKey] = {
+          uid: user.uid,
+          username: this.state.usernameValue,
+        }
+        databaseRef.update(updates, function() {
+          ipcRenderer.send("finish-login-event");
+        });
+
+      }.bind(this), function(error) {
+        console.log("error");
+      });
   },
   clickLogin: function(event) {
     event.preventDefault();
-    fireApp.auth().signInWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).catch(function(error) {
-      // Handle Errors here.
-      debugger;
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // ...
-    });
+    fireApp.auth().signInWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).then(function() {
+      ipcRenderer.send("finish-login-event");
+    }.bind(this));
   },
   render: function() {
     const { className, ...props } = this.props;
@@ -69,7 +77,8 @@ const Login = React.createClass({
         <h1>
           Login
         </h1>
-        Email: <input type="text" value={this.state.emailValue} onChange={this.handleEmailChange} />
+        Username: <input type="text" value={this.state.usernameValue} onChange={this.handleUsernameChange} /><br />
+        Email: <input type="text" value={this.state.emailValue} onChange={this.handleEmailChange} /><br />
         Password: <input type="password" value={this.state.passwordValue} onChange={this.handlePasswordChange} />
         <br />
         <a href="#" onClick={this.clickCreate}>Create Account</a>

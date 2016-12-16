@@ -30,14 +30,24 @@ var logout = function(options) {
 
   ipcMain.once('logout-event', (event) => {
     if(typeof options.success === 'function') options.success();
-    logoutWindow.close();
   });
 
   return logoutWindow;
 }
 
+const loginOptions = {
+  success: function(user) {
+    global.user = user
+  },
+  finish: function() {
+    Syft.login.close();
+    Syft.login = null;
+  },
+  fail: function() {}
+};
 var login = function(options) {
   options = options || {};
+  app.dock.show();
 
   console.log("logging in...");
   let loginWindow = new BrowserWindow({
@@ -54,15 +64,10 @@ var login = function(options) {
     loginWindow.focus();
   // }
 
-  loginWindow.on('closed', () => {
-    loginWindow = null;
-  });
-
-  ipcMain.on('login-event', (event, arg) => {
-    if(arg) {
-      if(typeof options.success === 'function') options.success();
-      loginWindow.close();
-      global.user = arg
+  ipcMain.on('login-event', (event, user) => {
+    console.log("MKWNG:LOGIN LOGIN LOGIN")
+    if(user) {
+      if(typeof options.success === 'function') options.success(user);
     } else {
       app.dock.show();
       loginWindow.show();
@@ -70,6 +75,12 @@ var login = function(options) {
     }
     // event.sender.send('login-reply', 'pong')
   })
+
+
+  ipcMain.on('finish-login-event', (event) => {
+    console.log("MKWNG:FINISH FINISH FINISH")
+    if(typeof options.success === 'function') options.success();
+  });
   return loginWindow;
 }
 
@@ -103,9 +114,9 @@ var createFromClipboard = function(options) {
   ipcMain.once('upload-event', (event, arg) => {
     // ipcMain.removeListener('image-buffer', writeImage);
     if(typeof options.success === 'function') options.success();
-    console.log(arg)
-    if(createWindow !== null) createWindow.close();
+
   } );
+  return createWindow;
 }
 
 var openProfile = function() {
@@ -116,7 +127,7 @@ var openProfile = function() {
     width: 800,
     height: 600
   });
-  profileWindow.loadURL(`file://${__dirname}/app.html#/profile/mkwng`);
+  profileWindow.loadURL(`file://${__dirname}/app.html#/profile`);
   profileWindow.focus();
 
   if(process.env.NODE_ENV === 'development') {
@@ -137,36 +148,53 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
 
   console.log("1: login");
-  Syft.login = login({
-    success: function() {
-      Syft.login = null;
-    },
-    fail: function() {}
-  });
+  Syft.login = login(loginOptions);
 
   console.log("2: menu");
   Syft.login.setMenu( MenuItems() )
 
   console.log("3: shortcut");
   Syft.shortcut = globalShortcut.register('CmdOrCtrl+Shift+P', () => {
-    createFromClipboard();
+    // If another window is already open, prompt to save? Allow multiple windows?
+    // if(Syft.createWindow !== null) {
+    //   Syft.createWindow.close();
+    //   Syft.createWindow = null;
+    // }
+    Syft.createWindow = createFromClipboard({
+      onSuccess: function() {
+        Syft.createWindow.close();
+        Syft.createWindow = null;
+      }
+    });
   })
 
   console.log("4: tray");
   Syft.tray = TrayIcon({
     onLogout: function() {
-      logout({
+      Syft.logoutWindow = logout({
         success: function() {
           dialog.showMessageBox({message: "Successfully signed out", buttons: ["Ok"], title: "Auth state"});
-          Syft.login = login();
+          Syft.logoutWindow.close();
+          Syft.logoutWindow = null;
+          Syft.login = login(loginOptions);
         }
       });
     },
     onQuit: function() {
       app.quit();
     },
-    onCapture: function() {
-      createFromClipboard();
+      onCapture: function() {
+      // If another window is already open, prompt to save? Allow multiple windows?
+      // if(Syft.createWindow !== null) {
+      //   Syft.createWindow.close();
+      //   Syft.createWindow = null;
+      // }
+      Syft.createWindow = createFromClipboard({
+        onSuccess: function() {
+          Syft.createWindow.close();
+          Syft.createWindow = null;
+        }
+      });
     },
     onProfile: function() {
       Syft.mainWindow = openProfile();
