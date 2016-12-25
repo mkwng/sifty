@@ -5,19 +5,18 @@ import { ipcRenderer, clipboard, remote } from 'electron';
 import fireApp from '../fireApp';
 var _ = require('lodash');
 
-const Create = React.createClass({
-  getInitialState: function() {
-    return {
-      type: null,
-      image: null,
-      desc: null,
-      title: "New pasted content",
-      contentType: null,
-      uploading: false,
-      progress: 0
-    };
-  },
-  componentDidMount: function() {
+export default class Create extends Component {
+  state = {
+    type: null,
+    image: null,
+    desc: null,
+    title: "New pasted content",
+    contentType: null,
+    uploading: false,
+    progress: 0
+  };
+
+  componentDidMount = () => {
     let formats = clipboard.availableFormats();
     console.log(formats)
     if(_.includes(formats, "image/png")) {
@@ -53,11 +52,13 @@ const Create = React.createClass({
     //     break;
     // };
 
-  },
-  handleTitleChange: function() {
-    this.setState({title: event.target.value});
-  },
-  upload: function(e) {
+  };
+
+  handleTitleChange = (e) => {
+    this.setState({title: e.target.value || ""});
+  };
+
+  upload = (e) => {
     e.preventDefault();
 
     this.setState({uploading: true});
@@ -135,8 +136,9 @@ const Create = React.createClass({
         break;
     }
 
-  },
-  render: function() {
+  };
+
+  render() {
     let content;
     switch(this.state.contentType) {
       case "text/plain":
@@ -166,6 +168,4 @@ const Create = React.createClass({
       </div>
     )
   }
-});
-
-export default Create
+}

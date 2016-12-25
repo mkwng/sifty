@@ -17,7 +17,6 @@ const Login = React.createClass({
   componentDidMount: function() {
     fireApp.auth().onAuthStateChanged(function(user) {
       if(user) {
-        console.dir(user);
         ipcRenderer.send("login-event", user);
       } else {
         this.setState({hasResponse: true});

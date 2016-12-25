@@ -17,8 +17,8 @@ var logout = function(options) {
   console.log("logging out...");
   let logoutWindow = new BrowserWindow({
     show: false,
-    width: 800,
-    height: 600
+    width: 375,
+    height: 480
   });
 
   logoutWindow.loadURL(`file://${__dirname}/app.html#/logout`);
@@ -38,8 +38,6 @@ var logout = function(options) {
 const loginOptions = {
   success: function(user) {
     global.user = user;
-    console.log(user);
-    console.dir(Syft);
     Syft.login.close();
     Syft.login = null;
   },
@@ -52,17 +50,18 @@ var login = function(options) {
   console.log("logging in...");
   let loginWindow = new BrowserWindow({
     show: false,
-    width: 800,
-    height: 600
+    width: 375,
+    height: 480
   });
 
   loginWindow.loadURL(`file://${__dirname}/app.html#/login`);
 
-  // if(process.env.NODE_ENV === 'development') {
+  if(process.env.NODE_ENV === 'development') {
+    app.dock.show();
     loginWindow.openDevTools();
     loginWindow.show();
     loginWindow.focus();
-  // }
+  }
 
   ipcMain.on('login-event', (event, user) => {
     if(user) {
@@ -90,8 +89,8 @@ var createFromClipboard = function(options) {
 
   let createWindow = new BrowserWindow({
     show: true,
-    width: 800,
-    height: 600
+    width: 375,
+    height: 480
   });
 
   createWindow.loadURL(`file://${__dirname}/app.html#/create`);
@@ -113,7 +112,6 @@ var createFromClipboard = function(options) {
   ipcMain.once('upload-event', (event, arg) => {
     // ipcMain.removeListener('image-buffer', writeImage);
     if(typeof options.success === 'function') options.success();
-
   } );
   return createWindow;
 }
@@ -123,8 +121,8 @@ var openProfile = function() {
 
   let profileWindow = new BrowserWindow({
     show: true,
-    width: 800,
-    height: 600
+    width: 375,
+    height: 480
   });
   profileWindow.loadURL(`file://${__dirname}/app.html#/profile`);
   profileWindow.focus();
@@ -160,7 +158,7 @@ app.on('ready', () => {
     //   Syft.createWindow = null;
     // }
     Syft.createWindow = createFromClipboard({
-      onSuccess: function() {
+      success: function() {
         Syft.createWindow.close();
         Syft.createWindow = null;
       }
@@ -189,7 +187,7 @@ app.on('ready', () => {
       //   Syft.createWindow = null;
       // }
       Syft.createWindow = createFromClipboard({
-        onSuccess: function() {
+        success: function() {
           Syft.createWindow.close();
           Syft.createWindow = null;
         }
