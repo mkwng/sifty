@@ -37,9 +37,9 @@ var logout = function(options) {
 
 const loginOptions = {
   success: function(user) {
-    global.user = user
-  },
-  finish: function() {
+    global.user = user;
+    console.log(user);
+    console.dir(Syft);
     Syft.login.close();
     Syft.login = null;
   },
@@ -65,7 +65,6 @@ var login = function(options) {
   // }
 
   ipcMain.on('login-event', (event, user) => {
-    console.log("MKWNG:LOGIN LOGIN LOGIN")
     if(user) {
       if(typeof options.success === 'function') options.success(user);
     } else {
@@ -76,11 +75,11 @@ var login = function(options) {
     // event.sender.send('login-reply', 'pong')
   })
 
-
-  ipcMain.on('finish-login-event', (event) => {
-    console.log("MKWNG:FINISH FINISH FINISH")
-    if(typeof options.success === 'function') options.success();
-  });
+  //
+  // ipcMain.on('finish-login-event', (event) => {
+  //   console.log("MKWNG:FINISH FINISH FINISH")
+  //   if(typeof options.success === 'function') options.success();
+  // });
   return loginWindow;
 }
 

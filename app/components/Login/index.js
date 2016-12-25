@@ -19,9 +19,6 @@ const Login = React.createClass({
       if(user) {
         console.dir(user);
         ipcRenderer.send("login-event", user);
-        ipcRenderer.on("login-reply", (event, arg) => {
-          console.log(arg) // prints "pong"
-        });
       } else {
         this.setState({hasResponse: true});
       }
@@ -41,18 +38,7 @@ const Login = React.createClass({
     // Create a user object
     fireApp.auth().createUserWithEmailAndPassword(this.state.emailValue, this.state.passwordValue)
       .then(function(user) {
-        // Associate them with a username
-        let databaseRef = firebase.database().ref();
-        let userKey = databaseRef.child('users').push().key;
-        let updates = {};
-        updates['/users/' + userKey] = {
-          uid: user.uid,
-          username: this.state.usernameValue,
-        }
-        databaseRef.update(updates, function() {
-          ipcRenderer.send("finish-login-event");
-        });
-
+        // Nothing
       }.bind(this), function(error) {
         console.log("error");
       });
@@ -60,7 +46,7 @@ const Login = React.createClass({
   clickLogin: function(event) {
     event.preventDefault();
     fireApp.auth().signInWithEmailAndPassword(this.state.emailValue, this.state.passwordValue).then(function() {
-      ipcRenderer.send("finish-login-event");
+      ipcRenderer.send("login-event");
     }.bind(this));
   },
   render: function() {
