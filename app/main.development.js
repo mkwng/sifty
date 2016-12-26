@@ -124,7 +124,7 @@ var openProfile = function() {
     width: 375,
     height: 480
   });
-  profileWindow.loadURL(`file://${__dirname}/app.html#/profile`);
+  profileWindow.loadURL(`file://${__dirname}/app.html#/u/${global.user.uid}`);
   profileWindow.focus();
 
   if(process.env.NODE_ENV === 'development') {

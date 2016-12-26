@@ -3,15 +3,18 @@ import React, { PropTypes, Component } from 'react';
 import { ipcRenderer, remote } from 'electron';
 import fireApp from '../fireApp';
 import classnames from 'classnames';
+import { Link } from 'react-router';
+import PostDetail from '../Post/PostDetail';
 
 export default class Profile extends Component {
   state = {
-    posts: {}
+    uid: this.props.params.user || remote.getGlobal('user').uid,
+    posts: {},
+    activePost: null
   };
 
   componentDidMount() {
-    let uid = remote.getGlobal('user').uid;
-    let userPosts = fireApp.database().ref('/posts').orderByChild("uid").equalTo(uid).limitToLast(15);
+    let userPosts = fireApp.database().ref('/posts').orderByChild("uid").equalTo(this.state.uid).limitToLast(15);
     userPosts.on("value", (response) => {
       this.setState({
         posts: response.val()
@@ -19,32 +22,31 @@ export default class Profile extends Component {
     })
   };
 
+  expandPost = (e, post) => {
+    e.preventDefault();
+    this.setState({ activePost: (<PostDetail post={post} />) });
+  };
+
   render() {
-    // let userPosts = this.state.posts.map( (post) => {
-    //   return (
-    //     <div>
-    //       <h3>{post.title}</h3>
-    //       <img src={post.url} />
-    //     </div>
-    //   );
-    // } );
+    // Loop through posts and create a bunch of links
     let userPosts = [];
-    for(var post in this.state.posts) {
-      let thisPost = this.state.posts[post];
+    for(var pid in this.state.posts) {
+      let thisPost = this.state.posts[pid];
       var thisJSX = (
-        <div>
+        <Link to={"/"+pid} onClick={ (e) => { this.expandPost(e, this.state.posts[pid]); } }>
           <h3>{thisPost.title}</h3>
           <img src={thisPost.url} />
-        </div>
+        </Link>
       );
       userPosts.push(thisJSX);
     }
+
     return (
       <div>
-        <h1>Profile: {this.props.params.user}</h1>
+        { this.state.activePost }
+        <h1>Profile: {this.state.uid}</h1>
         {userPosts}
       </div>
-
     );
   }
 };
