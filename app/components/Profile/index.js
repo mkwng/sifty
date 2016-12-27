@@ -24,16 +24,21 @@ export default class Profile extends Component {
 
   expandPost = (e, post) => {
     e.preventDefault();
-    this.setState({ activePost: (<PostDetail post={post} />) });
+    this.setState({ activePost: (<PostDetail post={post} onClose={this.collapsePost} />) });
   };
+
+  collapsePost = () => {
+    this.setState({ activePost: null });
+  }
 
   render() {
     // Loop through posts and create a bunch of links
     let userPosts = [];
     for(var pid in this.state.posts) {
-      let thisPost = this.state.posts[pid];
+      let thisPid = pid;
+      let thisPost = this.state.posts[thisPid];
       var thisJSX = (
-        <Link to={"/"+pid} onClick={ (e) => { this.expandPost(e, this.state.posts[pid]); } }>
+        <Link to={"/"+thisPid} onClick={ (e) => { this.expandPost(e, thisPost); } }>
           <h3>{thisPost.title}</h3>
           <img src={thisPost.url} />
         </Link>

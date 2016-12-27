@@ -12,18 +12,18 @@ export default class Post extends Component {
 
   componentDidMount() {
     let activePost = fireApp.database().ref('/posts/'+this.state.pid);
-    debugger;
-    // userPosts.on("value", (response) => {
-    //   this.setState({
-    //     posts: response.val()
-    //   });
-    // })
+    activePost.on("value", (response) => {
+      this.setState({
+        post: response.val()
+      });
+    });
   }
 
   render() {
+    let post = this.state.post ? (<PostDetail post={this.state.post} />) : "Loading...";
     return (
       <div>
-        <PostDetail post={this.state.post} />
+        { post }
       </div>
     );
   }
