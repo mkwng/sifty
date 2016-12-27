@@ -5,6 +5,8 @@ import { ipcRenderer, clipboard, remote } from 'electron';
 import fireApp from '../fireApp';
 var _ = require('lodash');
 
+const appURL = "http://localhost"
+
 export default class Create extends Component {
   state = {
     type: null,
@@ -118,7 +120,8 @@ export default class Create extends Component {
             title: this.state.title
           };
           databaseRef.update(updates, function() {
-            clipboard.writeText(downloadURL);
+            // clipboard.writeText(downloadURL);
+            clipboard.writeText(appURL + "/" + postKey);
             ipcRenderer.send("upload-event", downloadURL);
           });
 
