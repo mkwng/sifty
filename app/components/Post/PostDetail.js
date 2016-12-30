@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import classnames from 'classnames';
 
-const postClass = classnames('absolute', 'w-100', 'h-100', 'top-0', 'left-0', 'bg-black-80')
-const h1Class = classnames('white');
+const postClass = classnames('absolute', 'w-100', 'h-100', 'top-0', 'left-0', 'bg-white-90');
+const closeClass = classnames('db', 'absolute', 'top-1', 'right-1', 'w2', 'h2', 'bg-red');
+const h1Class = classnames();
+const imgClass = classnames();
 
 export default class PostDetail extends Component {
   state = this.props.post;
@@ -15,9 +17,9 @@ export default class PostDetail extends Component {
   render() {
     return(
       <div className={postClass}>
-        <a href="#" onClick={this.onClose}>Close</a>
+        <a className={closeClass} href="#" onClick={this.onClose}>Close</a>
         <h1 className={h1Class}>Post: {this.state.title}</h1>
-        <img src={this.state.url} />
+        <img className={imgClass} src={this.state.url} />
       </div>
     );
   }
