@@ -90,7 +90,8 @@ var createFromClipboard = function(options) {
   let createWindow = new BrowserWindow({
     show: true,
     width: 375,
-    height: 480
+    height: 480,
+    frame: false
   });
 
   createWindow.loadURL(`file://${__dirname}/app.html#/create`);

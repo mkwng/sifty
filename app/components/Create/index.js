@@ -3,6 +3,7 @@ import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 import { ipcRenderer, clipboard, remote } from 'electron';
 import fireApp from '../fireApp';
+import Header from '../Header';
 var _ = require('lodash');
 
 const appURL = "http://localhost"
@@ -163,6 +164,11 @@ export default class Create extends Component {
       : "Upload"
     return (
       <div>
+        <Header
+          title="Create"
+          onClose={ () => {console.log("close")} }
+          onMenu={ () => {console.log("menu")} }
+        />
         <div className="content">
           Title: <input type="text" value={this.state.title} onChange={this.handleTitleChange} />
           { content }
