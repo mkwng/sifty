@@ -5,6 +5,7 @@ import fireApp from '../fireApp';
 import classnames from 'classnames';
 import { Link } from 'react-router';
 import PostDetail from '../Post/PostDetail';
+import Header from '../Header';
 
 export default class Profile extends Component {
   state = {
@@ -49,7 +50,11 @@ export default class Profile extends Component {
     return (
       <div>
         { this.state.activePost }
-        <h1>Profile: {this.state.uid}</h1>
+        <Header
+          title={this.state.uid}
+          onClose={ () => {console.log("close")} }
+          onMenu={ () => {console.log("menu")} }
+        />
         {userPosts}
       </div>
     );

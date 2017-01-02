@@ -3,6 +3,7 @@ import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 import { ipcRenderer } from 'electron';
 import './style.css';
+import Header from '../Header';
 import fireApp from '../fireApp';
 
 const Login = React.createClass({
@@ -59,6 +60,11 @@ const Login = React.createClass({
     }
     return (
       <div className={classnames('Login', className)}>
+        <Header
+          title="Login"
+          onClose={ () => {console.log("close")} }
+          onMenu={ () => {console.log("menu")} }
+        />
         <h1>
           Login
         </h1>

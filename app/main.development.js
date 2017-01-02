@@ -18,7 +18,8 @@ var logout = function(options) {
   let logoutWindow = new BrowserWindow({
     show: false,
     width: 375,
-    height: 480
+    height: 480,
+    frame: false
   });
 
   logoutWindow.loadURL(`file://${__dirname}/app.html#/logout`);
@@ -51,7 +52,8 @@ var login = function(options) {
   let loginWindow = new BrowserWindow({
     show: false,
     width: 375,
-    height: 480
+    height: 480,
+    frame: false
   });
 
   loginWindow.loadURL(`file://${__dirname}/app.html#/login`);
@@ -123,7 +125,8 @@ var openProfile = function() {
   let profileWindow = new BrowserWindow({
     show: true,
     width: 375,
-    height: 480
+    height: 480,
+    frame: false
   });
   profileWindow.loadURL(`file://${__dirname}/app.html#/u/${global.user.uid}`);
   profileWindow.focus();
