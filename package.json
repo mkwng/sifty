@@ -1,6 +1,6 @@
 {
-  "name": "syft",
-  "productName": "Syft",
+  "name": "sifty",
+  "productName": "Sifty",
   "version": "0.10.0",
   "description": "Discover what your teammates are working on",
   "main": "main.js",
@@ -80,9 +80,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mkwng/syft/issues"
+    "url": "https://github.com/mkwng/sifty/issues"
   },
-  "homepage": "https://github.com/mkwng/syft",
+  "homepage": "https://github.com/mkwng/sifty",
   "devDependencies": {
     "asar": "^0.12.3",
     "babel-core": "^6.20.0",

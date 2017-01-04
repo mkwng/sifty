@@ -4,7 +4,7 @@ const config = require('./config');
 const TrayIcon = require('./server-components/TrayIcon');
 const MenuItems = require('./server-components/MenuItems');
 
-let Syft = {};
+let Sifty = {};
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support'); // eslint-disable-line
@@ -39,8 +39,8 @@ var logout = function(options) {
 const loginOptions = {
   success: function(user) {
     global.user = user;
-    Syft.login.close();
-    Syft.login = null;
+    Sifty.login.close();
+    Sifty.login = null;
   },
   fail: function() {}
 };
@@ -149,35 +149,35 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
 
   console.log("1: login");
-  Syft.login = login(loginOptions);
+  Sifty.login = login(loginOptions);
 
   console.log("2: menu");
-  Syft.login.setMenu( MenuItems() )
+  Sifty.login.setMenu( MenuItems() )
 
   console.log("3: shortcut");
-  Syft.shortcut = globalShortcut.register('CmdOrCtrl+Shift+P', () => {
+  Sifty.shortcut = globalShortcut.register('CmdOrCtrl+Shift+P', () => {
     // If another window is already open, prompt to save? Allow multiple windows?
-    // if(Syft.createWindow !== null) {
-    //   Syft.createWindow.close();
-    //   Syft.createWindow = null;
+    // if(Sifty.createWindow !== null) {
+    //   Sifty.createWindow.close();
+    //   Sifty.createWindow = null;
     // }
-    Syft.createWindow = createFromClipboard({
+    Sifty.createWindow = createFromClipboard({
       success: function() {
-        Syft.createWindow.close();
-        Syft.createWindow = null;
+        Sifty.createWindow.close();
+        Sifty.createWindow = null;
       }
     });
   })
 
   console.log("4: tray");
-  Syft.tray = TrayIcon({
+  Sifty.tray = TrayIcon({
     onLogout: function() {
-      Syft.logoutWindow = logout({
+      Sifty.logoutWindow = logout({
         success: function() {
           dialog.showMessageBox({message: "Successfully signed out", buttons: ["Ok"], title: "Auth state"});
-          Syft.logoutWindow.close();
-          Syft.logoutWindow = null;
-          Syft.login = login(loginOptions);
+          Sifty.logoutWindow.close();
+          Sifty.logoutWindow = null;
+          Sifty.login = login(loginOptions);
         }
       });
     },
@@ -186,21 +186,21 @@ app.on('ready', () => {
     },
       onCapture: function() {
       // If another window is already open, prompt to save? Allow multiple windows?
-      // if(Syft.createWindow !== null) {
-      //   Syft.createWindow.close();
-      //   Syft.createWindow = null;
+      // if(Sifty.createWindow !== null) {
+      //   Sifty.createWindow.close();
+      //   Sifty.createWindow = null;
       // }
-      Syft.createWindow = createFromClipboard({
+      Sifty.createWindow = createFromClipboard({
         success: function() {
-          Syft.createWindow.close();
-          Syft.createWindow = null;
+          Sifty.createWindow.close();
+          Sifty.createWindow = null;
         }
       });
     },
     onProfile: function() {
-      Syft.mainWindow = openProfile();
+      Sifty.mainWindow = openProfile();
     }
   });
-  Syft.tray.setToolTip("Syft");
+  Sifty.tray.setToolTip("Sifty");
 
 });

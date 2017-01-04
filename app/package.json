@@ -1,6 +1,6 @@
 {
-  "name": "Syft",
-  "productName": "Syft",
+  "name": "Sifty",
+  "productName": "Sifty",
   "version": "1.0.0",
   "description": "Discover what your teammates are working on",
   "main": "./main.js",

@@ -119,7 +119,7 @@ var MenuItems = function() {
   if (process.platform === 'darwin') {
     let template = [
       {
-        label: 'Syft',
+        label: 'Sifty',
         submenu: [
           {
             label: 'Hide ElectronReact',

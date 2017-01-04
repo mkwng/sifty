@@ -1,4 +1,4 @@
-# syft
+# Sifty
 Discover what your teammates are working on
 
 ## Features
