@@ -3,10 +3,13 @@ import React, { PropTypes, Component } from 'react';
 import classnames from 'classnames';
 const remote = require('electron').remote;
 
-const headerClasses = classnames('h3','flex','justify-between', 'items-center');
-const leftClasses = classnames('w3', 'tc');
-const centerClasses = classnames('w5', 'tc', 'f6');
-const rightClasses = classnames('w3', 'tc');
+import './style.css';
+
+const headerClasses = classnames('header', 'h2','flex','justify-between', 'items-center');
+const leftClasses = classnames('header-left', 'w3', 'tc');
+const centerClasses = classnames('header-center', 'w5', 'tc');
+const rightClasses = classnames('header-right', 'w3', 'tc');
+
 
 export default class Header extends Component {
   onClose = (e) => {

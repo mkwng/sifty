@@ -7,6 +7,9 @@ import { Link } from 'react-router';
 import PostDetail from '../Post/PostDetail';
 import Header from '../Header';
 
+const profileClasses = classnames('w-100', 'flex', 'flex-wrap');
+const postClasses = classnames('w-third');
+
 export default class Profile extends Component {
   state = {
     uid: this.props.params.user || remote.getGlobal('user').uid,
@@ -39,7 +42,7 @@ export default class Profile extends Component {
       let thisPid = pid;
       let thisPost = this.state.posts[thisPid];
       var thisJSX = (
-        <Link to={"/"+thisPid} onClick={ (e) => { this.expandPost(e, thisPost); } }>
+        <Link className={postClasses} to={"/"+thisPid} onClick={ (e) => { this.expandPost(e, thisPost); } }>
           <h3>{thisPost.title}</h3>
           <img src={thisPost.url} />
         </Link>
@@ -48,7 +51,7 @@ export default class Profile extends Component {
     }
 
     return (
-      <div>
+      <div className={profileClasses}>
         { this.state.activePost }
         <Header
           title={this.state.uid}
