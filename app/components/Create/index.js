@@ -7,6 +7,7 @@ import Header from '../Header';
 var _ = require('lodash');
 
 const appURL = "http://localhost"
+let imageStyle = {};
 
 export default class Create extends Component {
   state = {
@@ -152,7 +153,10 @@ export default class Create extends Component {
         break;
       case "image/png":
         content = (
-          <img src={ this.state.image.toDataURL() } />
+          // <img src={ this.state.image.toDataURL() } />
+          <div className={classnames('w3', 'h3', 'cover', 'bg-center')} style={{
+            backgroundImage: 'url('+this.state.image.toDataURL()+')'
+          }}></div>
         )
         break;
       default:
@@ -169,9 +173,11 @@ export default class Create extends Component {
           onClose={ () => {console.log("close")} }
           onMenu={ () => {console.log("menu")} }
         />
-        <div className="content">
-          Title: <input type="text" value={this.state.title} onChange={this.handleTitleChange} />
+        <div className={classnames('content','flex')}>
           { content }
+          <input type="text" value={this.state.title} onChange={this.handleTitleChange} style={{
+            flex: '1 0 auto'
+          }} />
         </div>
         <a href="#" onClick={ this.state.uploading ? function() {} : this.upload }>{buttonText}</a>
       </div>
