@@ -5,10 +5,10 @@ import fireApp from '../fireApp';
 import classnames from 'classnames';
 import { Link } from 'react-router';
 import PostDetail from '../Post/PostDetail';
+import PostThumb from '../Post/PostThumb';
 import Header from '../Header';
 
 const profileClasses = classnames('w-100', 'flex', 'flex-wrap');
-const postClasses = classnames('w-third');
 
 export default class Profile extends Component {
   state = {
@@ -42,10 +42,7 @@ export default class Profile extends Component {
       let thisPid = pid;
       let thisPost = this.state.posts[thisPid];
       var thisJSX = (
-        <Link className={postClasses} to={"/"+thisPid} onClick={ (e) => { this.expandPost(e, thisPost); } }>
-          <h3>{thisPost.title}</h3>
-          <img src={thisPost.url} />
-        </Link>
+        <PostThumb post={thisPost} pid={thisPid} onClick={ (e) => { this.expandPost(e, thisPost); } } />
       );
       userPosts.push(thisJSX);
     }
