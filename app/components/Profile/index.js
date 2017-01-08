@@ -3,7 +3,6 @@ import React, { PropTypes, Component } from 'react';
 import { ipcRenderer, remote } from 'electron';
 import fireApp from '../fireApp';
 import classnames from 'classnames';
-import { Link } from 'react-router';
 import PostDetail from '../Post/PostDetail';
 import PostThumb from '../Post/PostThumb';
 import Header from '../Header';
